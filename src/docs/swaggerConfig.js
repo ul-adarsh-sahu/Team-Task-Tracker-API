@@ -462,6 +462,76 @@ const options = {
           },
         },
       },
+
+      // ── ANALYTICS ──────────────────────────────────────────────────────────
+      "/analytics/overdue": {
+        get: {
+          tags: ["Analytics"],
+          summary: "Overdue tasks grouped by assignee",
+          description: "**ADMIN, MANAGER** — returns all tasks whose `due_date` has passed and status is not DONE, grouped by assignee with counts.",
+          security: [{ BearerAuth: [] }],
+          responses: {
+            200: {
+              description: "Overdue task list",
+              content: { "application/json": { schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "object",
+                    properties: {
+                      totalOverdue: { type: "integer", example: 7 },
+                      byAssignee: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            assignee: { "$ref": "#/components/schemas/User" },
+                            overdueCount: { type: "integer" },
+                            tasks: { type: "array", items: { "$ref": "#/components/schemas/Task" } },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              } } },
+            },
+            401: { description: "Unauthorized" },
+            403: { description: "Forbidden" },
+          },
+        },
+      },
+      "/analytics/summary": {
+        get: {
+          tags: ["Analytics"],
+          summary: "Org-wide task statistics",
+          description: "**ADMIN, MANAGER** — task counts by status, completed task count, and average completion time in hours (from `createdAt` to `completedAt`).",
+          security: [{ BearerAuth: [] }],
+          responses: {
+            200: {
+              description: "Summary statistics",
+              content: { "application/json": { schema: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "object",
+                    properties: {
+                      tasksByStatus: {
+                        type: "object",
+                        example: { "TODO": 5, "IN_PROGRESS": 3, "IN_REVIEW": 1, "DONE": 12, "BLOCKED": 2 },
+                      },
+                      completedTasks: { type: "integer", example: 12 },
+                      avgCompletionTimeHours: { type: "number", example: 18.5, nullable: true },
+                    },
+                  },
+                },
+              } } },
+            },
+            401: { description: "Unauthorized" },
+            403: { description: "Forbidden" },
+          },
+        },
+      },
     },
   },
   apis: [], // paths defined inline above

@@ -11,14 +11,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Swagger UI — available at /api/v1/docs
-app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+// Swagger UI — available at /api-docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customSiteTitle: "Team Task Tracker API",
   swaggerOptions: { persistAuthorization: true },
 }));
 
 // Expose raw spec for tooling (Postman import, etc.)
-app.get("/api/v1/docs.json", (req, res) => res.json(swaggerSpec));
+app.get("/api-docs.json", (req, res) => res.json(swaggerSpec));
 
 // Routes
 app.use("/api/v1", require("./src/api/api.router"));
@@ -45,7 +45,7 @@ const start = async () => {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT} [${process.env.NODE_ENV || "development"}]`);
-    console.log(`Swagger UI: http://localhost:${PORT}/api/v1/docs`);
+    console.log(`Swagger UI: http://localhost:${PORT}/api-docs`);
   });
 };
 
